@@ -4,68 +4,60 @@
  * [304] Range Sum Query 2D - Immutable
  */
 
+#include <vector>
+
+using namespace std;
+
 // @lc code=start
 class NumMatrix {
 private:
+    // ¯\_(ツ)_/¯ I just hate typing long names
     typedef vector<vector<int>> vtr2D;
     typedef vector<int> vtr1D;
     
-    vtr2D pfxSum2D;
-    int n;
-    int m;
+    vtr2D psum2D;     // 2D Prefix Sum for matrix
+    int row;
+    int col;
 
 public:
     NumMatrix(vtr2D& matrix) {
-        this->n = matrix.size();
-        this->m = matrix[0].size();
+        row = matrix.size();
+        col = matrix[0].size();
         
-        if (n == 0 || m == 0) { return; }
-        
-        pfxSum2D = findPrefixSums2D(matrix);
+        if (matrix.empty()) { return; }     // If matrix is empty, then die
+        psum2D = prefixSum2D(matrix);       // else don't die, and do stuff :D
     }
 
     
-    int sumRegion(int row1, int col1, int row2, int col2) {
-        return pfxSum2D[row2 + 1][col2 + 1] - pfxSum2D[row2 + 1][col1] - pfxSum2D[row1][col2 + 1] + pfxSum2D[row1][col1];
-    }
-    
-
-    vtr1D prefixSum(const vtr1D& nums) {
-        int ns = nums.size();
-        vtr1D pfxSum(ns + 1, 0);
-
-        for (int i = 0; i < ns; i++) {
-            pfxSum[i + 1] = pfxSum[i] + nums[i];
-        }
-
-        return pfxSum;
+    int sumRegion(int r1, int c1, int r2, int c2) {
+        return psum2D[r2 + 1][c2 + 1] - 
+               psum2D[r2 + 1][c1] - 
+               psum2D[r1][c2 + 1] + 
+               psum2D[r1][c1];
     }
 
 
-    vtr2D findPrefixSums2D(const vtr2D& matrix) {
-        vtr2D prefixSum1D(n);
-        vtr2D prefixSum2D(this->n + 1, vtr1D(m + 1, 0));
+    vtr2D prefixSum2D(const vtr2D& matrix) {
+        vtr2D psum2D(row + 1, vtr1D(col + 1, 0));
 
-        // Building PrefixSum1D [Horizontal of pfxSum2D]
-        for (int i = 0; i < this->n; i++) {
-            prefixSum1D[i] = prefixSum(matrix[i]);
-        }
-
-        // Building PrefixSum2D [Vertical of pfxSum2D]
-        for (int i = 0; i < this->n; i++) {
-            for (int j = 0; j < this->m; j++) {
-                prefixSum2D[i + 1][j + 1] = prefixSum2D[i + 1][j] + prefixSum2D[i][j + 1] - prefixSum2D[i][j] + matrix[i][j];
+        // Building cumulative sum [Horizaton & Vertical of psum2D]
+        for (int i = 1; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                psum2D[i + 1][j + 1] = psum2D[i + 1][j] + 
+                                       psum2D[i][j + 1] - 
+                                       psum2D[i][j] + 
+                                       matrix[i][j];
             }
         }
 
-        return prefixSum2D;
+        return psum2D;
     }
 };
 
 /**
  * Your NumMatrix object will be instantiated and called as such:
  * NumMatrix* obj = new NumMatrix(matrix);
- * int param_1 = obj->sumRegion(row1,col1,row2,col2);
+ * int param_1 = obj->sumRegion(r1,c1,r2,c2);
  */
 // @lc code=end
 
