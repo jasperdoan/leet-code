@@ -1,6 +1,10 @@
 {
     "files.associations": {
         "vector": "cpp",
-        "limits": "cpp"
+        "limits": "cpp",
+        "string_view": "cpp",
+        "string": "cpp",
+        "*.tcc": "cpp",
+        "unordered_map": "cpp"
     }
 }
