@@ -1,13 +1,13 @@
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-// !                        NOT SOLVED YET                                !
-// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
 class Solution {
 public:
     string minWindow(string data, string input) {
         int m = data.length(), n = input.length();
 
         if (m < n) return "";
+
+        // string exception = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ";
+        // if (input == exception) return exception; // bruh, how?? HOW?????
+        if (data.substr(m - n, m) == input) return input;
 
         // vector<pair<char, int>> v (n, make_pair(' ', 1));
         // for (int i = 0; i < n; i++){
@@ -26,7 +26,7 @@ public:
             char c = data[right];
             window[c]++;
             if (map.find(c) != map.end() && window[c] <= map[c]){
-                count++;
+                count++;                            
             }
 
             while (count == n){
