@@ -3,9 +3,7 @@ public:
     int maxEvents(vector<vector<int>>& events) {
         queue<int> q;
 
-        sort(events.begin(), events.end(), [](const vector<int>& a, const vector<int>& b) {
-            return a[1] < b[1];
-        });
+        sort(events.begin(), events.end());
 
         q.push(events[0][0]);
 
