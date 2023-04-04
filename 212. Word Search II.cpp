@@ -1,43 +1,70 @@
 class Solution {
-public:
-    typedef vector<vector<char>> matrix;
+private:
+    struct TrieNode {
+        vector<TrieNode*> children;
+        string word;
+        TrieNode() : children(26, nullptr), word("") {}
+    };
 
-    vector<string> findWords(matrix& board, vector<string>& words) {
-        vector<string> res;
-        for (auto word : words) {
-            if (exist(board, word)) res.push_back(word); 
+
+    TrieNode* buildTrie(vector<string>& words){
+        TrieNode* root = new TrieNode();
+
+        for (string word : words) {
+            TrieNode* node = root;
+
+            for (char ch : word) {
+                if (node->children[ch - 'a'] == nullptr) {
+                    node->children[ch - 'a'] = new TrieNode();
+                }
+                node = node->children[ch - 'a'];
+            }
+            node->word = word;
         }
-        return res;
+
+        return root;
     }
 
-    bool exist(matrix& board, string& word) {
-        bool found = false;
-        int i = 0;
 
-        if (board.empty() or word.empty()) return found;
+    void dfs(vector<vector<char>>& board, int i, int j, TrieNode* node, vector<string>& ans){
+        char ch = board[i][j];
+        if (ch == '#' || node->children[ch - 'a'] == nullptr) return;
 
-        for (int r = 0; r < board.size() and !found; r++) {
-            for (int c = 0; c < board[0].size() and !found; c++) {
-                dfs(r, c, board, i, word, found);
+        node = node->children[ch - 'a'];
+        if (node->word != "") {
+            ans.push_back(node->word);
+            node->word = "";
+        }
+
+        board[i][j] = '#';
+
+        if (i > 0) 
+            dfs(board, i - 1, j, node, ans);
+
+        if (j > 0) 
+            dfs(board, i, j - 1, node, ans);
+
+        if (i < board.size() - 1) 
+            dfs(board, i + 1, j, node, ans);
+
+        if (j < board[0].size() - 1) 
+            dfs(board, i, j + 1, node, ans);
+
+        board[i][j] = ch;
+    }
+
+
+public:
+    vector<string> findWords(vector<vector<char>>& board, vector<string>& words) {
+        vector<string> ans;
+        TrieNode* root = buildTrie(words);
+
+        for (int i = 0; i < board.size(); i++) {
+            for (int j = 0; j < board[0].size(); j++) {
+                dfs(board, i, j, root, ans);
             }
         }
-        return found;
-    }
 
-    void dfs(int r, int c, matrix& board, int i, string &word, bool &found)
-    {
-        bool outBounds = r < 0 or r >= board.size() or c < 0 or c >= board[0].size();
-        char ch;
-
-        if (outBounds or board[r][c] != word[i] or found) { return; }
-        if (i == word.size() - 1) { found = true; return; }
-
-        ch = board[r][c];
-        board[r][c] = '#';
-        dfs(r + 1, c, board, i + 1, word, found);
-        dfs(r - 1, c, board, i + 1, word, found);
-        dfs(r, c + 1, board, i + 1, word, found);
-        dfs(r, c - 1, board, i + 1, word, found);
-        board[r][c] = ch;
+        return ans;
     }
 };
