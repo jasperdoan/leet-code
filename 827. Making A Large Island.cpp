@@ -30,19 +30,20 @@ public:
         for (int i = 0; i < n; i++) {
             for (int j = 0; j < m; j++) {
                 if (grid[i][j] == 0) {
-                    unordered_set<int> ids;
+                    unordered_set<int> ids; // ids of the islands around the 0 cell
                     int sum = 1;
 
-                    if (i > 0) ids.insert(grid[i - 1][j]);
-                    if (j > 0) ids.insert(grid[i][j - 1]);
-                    if (i < n - 1) ids.insert(grid[i + 1][j]);
-                    if (j < m - 1) ids.insert(grid[i][j + 1]);
+                    // Grabbing the id of the island on the:
+                    if (i > 0) ids.insert(grid[i - 1][j]);      // left of the 0 cell
+                    if (j > 0) ids.insert(grid[i][j - 1]);      // top of the 0 cell
+                    if (i < n - 1) ids.insert(grid[i + 1][j]);  // right of the 0 cell
+                    if (j < m - 1) ids.insert(grid[i][j + 1]);  // bottom of the 0 cell
                     
                     for (auto& id : ids) {
                         sum += area[id];
                     }
                     
-                    ans = max(ans, sum);
+                    ans = max(ans, sum);    // Update the largest island if needed
                 }
             }
         }
